@@ -104,3 +104,7 @@ dist
 .tern-port
 
 sqlite/
+
+# React build
+build/
+client/build/

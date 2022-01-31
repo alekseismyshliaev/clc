@@ -9,6 +9,7 @@ class App extends React.Component {
     this.state = {
       gameId: "",
       gameData: null,
+      isLoading: false,
     };
   };
 
@@ -17,20 +18,21 @@ class App extends React.Component {
   };
 
   getGameData = (e) => {
+    this.setState({isLoading: true});
     fetch("/api/v1/getGameData", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         gameId: this.state.gameId
       }),
-    }).then(response => this.setState({gameData: response.json()}));
+    }).then(response => response.json()).then(jsonData => this.setState({gameData: jsonData, isLoading: false}));
   };
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src={logo} className={`App-logo ${this.state.isLoading ? "loading" : ""}`} alt="logo" />
           <p>
             Input game ID: <input id="gameId" value={this.state.gameId} onChange={this.setStateField}></input><button onClick={this.getGameData}>Fetch Data</button>
           </p>
