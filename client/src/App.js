@@ -37,10 +37,11 @@ class App extends React.Component {
             Input game ID: <input id="gameId" value={this.state.gameId} onChange={this.setStateField}></input><button onClick={this.getGameData}>Fetch Data</button>
           </p>
           {this.state.gameData ?
-          <p>{JSON.stringify(this.state.gameData)}</p>
+            <pre className={"json-text"}>{JSON.stringify(this.state.gameData, null, 4)}</pre>
           :
-          ""}
+            ""}
         </header>
+
       </div>
     );
   }
