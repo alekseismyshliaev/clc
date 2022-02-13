@@ -1,11 +1,17 @@
+import CssBaseline from '@Mui/material/CssBaseline';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Helmet} from 'react-helmet';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
+    <Helmet>
+      <meta name="viewport" content="initial-scale=1, width=device-width" />
+    </Helmet>
+    <CssBaseline />
     <App />
   </React.StrictMode>,
   document.getElementById('root')
