@@ -20,12 +20,8 @@ class App extends React.Component {
 
   getGameData = (e) => {
     this.setState({isLoading: true});
-    fetch("/api/v1/getGameData", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        gameId: this.state.gameId
-      }),
+    fetch(`/api/game/${this.state.gameId}`, {
+      method: "GET",
     }).then(response => response.json()).then(jsonData => this.setState({gameData: jsonData, isLoading: false}));
   };
 
