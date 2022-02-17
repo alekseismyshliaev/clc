@@ -1,17 +1,16 @@
-import fetch from "node-fetch";
+import cors from "cors";
 import express from "express";
 import bodyParser from "body-parser";
-import GameRoutes from './routes/game.js';
+import GameRoutes from "./routes/game.js";
 
 const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-const RIOT_API_URL = "https://europe.api.riotgames.com";
-
 // serve static files from the React build
 app.use(express.static("build"));
 app.use(bodyParser.json());
+app.use(cors());
 
 
 app.use('/api/game', GameRoutes);
