@@ -21,13 +21,21 @@ class TeamInfo extends React.Component {
     return (
       <>
         <h3>{this.state.side} team: {this.state.win ? "VICTORY" : "DEFEAT"}</h3>
-        <Stack direction="row" spacing={2}>
-          <Paper>Barons: {this.state.totalStats.barons}</Paper>
-          <Paper>Dragons: {this.state.totalStats.dragons}</Paper>
-          <Paper>Kills: {this.state.totalStats.kills}</Paper>
-          <Paper>Towers: {this.state.totalStats.towers}</Paper>
-          {this.state.totalStats.firstBlood && <Paper><b>FIRST BLOOD!</b></Paper>}
-        </Stack>
+        <p>
+          <Stack direction="row" spacing={2}>
+            <Paper>Barons: {this.state.totalStats.barons}</Paper>
+            <Paper>Dragons: {this.state.totalStats.dragons}</Paper>
+            <Paper>Kills: {this.state.totalStats.kills}</Paper>
+            <Paper>Towers: {this.state.totalStats.towers}</Paper>
+            {this.state.totalStats.firstBlood && <Paper><b>FIRST BLOOD!</b></Paper>}
+          </Stack>
+        </p>
+        <p>
+          <Stack direction="row" spacing={2}>
+            Bans:
+            {this.state.bans.map(b => <Paper>{b}</Paper>)}
+          </Stack>
+        </p>
         <TeamParticipants participants={this.state.participants} />
       </>
     );

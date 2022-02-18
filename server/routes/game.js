@@ -1,5 +1,7 @@
-import {Router} from 'express';
-import {riotFetch} from '../utils.js';
+import { Router } from "express";
+import { readFile } from "fs/promises";
+import { riotFetch } from "../utils.js";
+
 
 var router = Router();
 
@@ -8,47 +10,63 @@ const BLUE_TEAM_ID = 100;
 const RED_TEAM_ID = 200;
 
 function sum(list) {
-    list.map(value => parseFloat(value)).reduce((a, b) => a + b, 0);
+    return list.map(value => parseFloat(value)).reduce((a, b) => a + b, 0);
 };
 
 
+const _CHAMPIONS_JSON = JSON.parse(await readFile(new URL("../../data/champion.json", import.meta.url)));
+
+const CHAMPIONS_BY_ID = Object.keys(_CHAMPIONS_JSON.data).reduce((collection, item) => {
+    var champion = _CHAMPIONS_JSON.data[item];
+    collection[champion.key] = champion;
+    return collection;
+}, {});
+
+
 function getChampionName(championId) {
-    return championId;
+    return CHAMPIONS_BY_ID[championId].name;
 };
 
 
 function getTeamData(matchData, teamId) {
     console.log(matchData.info.teams);
+    var gameDuration = matchData.info.gameDuration / 60.0;
     var teamInfo = matchData.info.teams.filter(team => team.teamId == teamId)[0];
 
     var participantsInfo = matchData.info.participants.filter(participant => participant.teamId == teamId);
+    var teamDamage = sum(participantsInfo.map(p => p.totalDamageDealtToChampions));
+    var teamGold = sum(participantsInfo.map(p => p.goldEarned));
+    var teamKills = sum(participantsInfo.map(p => p.kills));
 
     var participants = participantsInfo.map(p => {
+        var cs = p.neutralMinionsKilled + p.totalMinionsKilled;
+        var takedowns = p.assists + p.kills;
         return {
             "assists": p.assists,
             "champion": p.championName,
-            "cs": parseInt(p.neutralMinionsKilled) + parseInt(p.totalMinionsKilled),
+            "cs": cs,
             "csd@14": -1,
-            "csm": -1,
+            "cspm": cs / gameDuration,
             "damage": p.totalDamageDealtToChampions,
-            "dpm": -1,
-            "dmg%": -1,
+            "dpm": p.totalDamageDealtToChampions / gameDuration,
+            "dmg%": p.totalDamageDealtToChampions / teamDamage,
             "deaths": p.deaths,
-            "fb": -1,
-            "gold": parseInt(p.goldEarned),
-            "gpm": -1,
-            "g%": -1,
+            "fb": p.firstBloodKill ? 1 : 0,
+            "gold": p.goldEarned,
+            "gpm": p.goldEarned / gameDuration,
+            "g%": p.goldEarned / teamGold,
             "gd@14": -1,
-            "kda": (parseInt(p.assists) + parseInt(p.kills)) / parseInt(p.deaths),
+            "kda": takedowns / p.deaths,
             "kills": p.kills,
-            "kp%": -1,
+            "kp%": takedowns / teamKills,
             "k+a@14": -1,
             "player": p.summonerName,
             "vision": p.visionScore,
-            "vspm": -1,
+            "vspm": p.visionScore / gameDuration,
         }
     });
     return {
+        "bans": teamInfo.bans.sort(b => b.pickTurn).map(b => getChampionName(b.championId)),
         participants,
         "totalStats": {
             "assists": sum(participantsInfo.map(p => p.assists)),
