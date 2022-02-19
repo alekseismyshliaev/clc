@@ -49,7 +49,9 @@ class TeamParticipants extends React.Component {
       participants: props.participants,
     }
   }
+
   render() {
+    var prettify = number => number.toLocaleString(navigator.language, {maximumFractionDigits: 2});
     return (
       <Table>
         <TableHead>
@@ -71,10 +73,10 @@ class TeamParticipants extends React.Component {
             <TableCell>Damage/min</TableCell>
             <TableCell>Damage %</TableCell>
             <TableCell>Kill Participation</TableCell>
-            <TableCell>Gold Diff @14min</TableCell>
-            <TableCell>CS Diff @14min</TableCell>
+            <TableCell>Gold Earned @14min</TableCell>
+            <TableCell>Creep Score @14min</TableCell>
+            <TableCell>Takedowns @14min</TableCell>
             <TableCell>First Blood</TableCell>
-            <TableCell>K+A @14min</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -88,22 +90,22 @@ class TeamParticipants extends React.Component {
               <TableCell>{participant.kills}</TableCell>
               <TableCell>{participant.deaths}</TableCell>
               <TableCell>{participant.assists}</TableCell>
-              <TableCell>{participant.kda}</TableCell>
+              <TableCell>{prettify(participant.kda)}</TableCell>
               <TableCell>{participant.cs}</TableCell>
-              <TableCell>{participant.cspm}</TableCell>
+              <TableCell>{prettify(participant.cspm)}</TableCell>
               <TableCell>{participant.gold}</TableCell>
-              <TableCell>{participant.gpm}</TableCell>
-              <TableCell>{participant['g%']}</TableCell>
+              <TableCell>{prettify(participant.gpm)}</TableCell>
+              <TableCell>{prettify(participant['g%'])}</TableCell>
               <TableCell>{participant.vision}</TableCell>
-              <TableCell>{participant.vspm}</TableCell>
+              <TableCell>{prettify(participant.vspm)}</TableCell>
               <TableCell>{participant.damage}</TableCell>
-              <TableCell>{participant.dpm}</TableCell>
-              <TableCell>{participant['dmg%']}</TableCell>
-              <TableCell>{participant['kp%']}</TableCell>
-              <TableCell>{participant['gd@14']}</TableCell>
-              <TableCell>{participant['csd@14']}</TableCell>
+              <TableCell>{prettify(participant.dpm)}</TableCell>
+              <TableCell>{prettify(participant['dmg%'])}</TableCell>
+              <TableCell>{prettify(participant['kp%'])}</TableCell>
+              <TableCell>{participant['gold@14']}</TableCell>
+              <TableCell>{participant['cs@14']}</TableCell>
+              <TableCell>{participant['takedowns@14']}</TableCell>
               <TableCell>{participant.fb}</TableCell>
-              <TableCell>{participant['k+a@14']}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -27,9 +27,48 @@ function getChampionName(championId) {
     return CHAMPIONS_BY_ID[championId].name;
 };
 
+async function getMidgameStatsByPuuid(matchId) {
+    var jsonData = await (await riotFetch(`/lol/match/v5/matches/${matchId}/timeline`)).json();
+    var statsByPuuid = jsonData.info.participants.reduce((collection, item) => {
+        collection[item.puuid] = {
+            "cs": 0,
+            "gold": 0,
+            "takedowns": 0,
+        };
+        return collection;
+    }, {});
 
-function getTeamData(matchData, teamId) {
-    console.log(matchData.info.teams);
+    var puuidByParticipantId = jsonData.info.participants.reduce((collection, item) => {
+        collection[item.participantId] = item.puuid;
+        return collection;
+    }, {});
+
+    var addTakedown = id => statsByPuuid[puuidByParticipantId[id]].takedowns += 1;
+
+    var earlyFrames = jsonData.info.frames.filter(frame => (frame.timestamp / 60000) <= 14);    // before 14min
+    earlyFrames.forEach(frame => {
+        frame.events.forEach(event => {
+            if (event.type == "CHAMPION_KILL") {
+                addTakedown(event.killerId);
+                if ("assistingParticipantIds" in event) {
+                    event.assistingParticipantIds.forEach(id => addTakedown(id));
+                };
+            }
+        })
+    });
+
+    var lastFrame = earlyFrames[earlyFrames.length - 1];
+    Object.values(lastFrame.participantFrames).forEach(participant => {
+        var participantStats = statsByPuuid[puuidByParticipantId[participant.participantId]];
+        participantStats.cs = participant.minionsKilled + participant.jungleMinionsKilled;
+        participantStats.gold = participant.totalGold;
+    });
+    return statsByPuuid;
+}
+
+
+async function getTeamData(matchData, teamId) {
+    var midgameStatsByPuuid = await getMidgameStatsByPuuid(matchData.metadata.matchId);
     var gameDuration = matchData.info.gameDuration / 60.0;
     var teamInfo = matchData.info.teams.filter(team => team.teamId == teamId)[0];
 
@@ -45,7 +84,7 @@ function getTeamData(matchData, teamId) {
             "assists": p.assists,
             "champion": p.championName,
             "cs": cs,
-            "csd@14": -1,
+            "cs@14": midgameStatsByPuuid[p.puuid].cs,
             "cspm": cs / gameDuration,
             "damage": p.totalDamageDealtToChampions,
             "dpm": p.totalDamageDealtToChampions / gameDuration,
@@ -55,11 +94,11 @@ function getTeamData(matchData, teamId) {
             "gold": p.goldEarned,
             "gpm": p.goldEarned / gameDuration,
             "g%": p.goldEarned / teamGold,
-            "gd@14": -1,
+            "gold@14": midgameStatsByPuuid[p.puuid].gold,
             "kda": takedowns / p.deaths,
             "kills": p.kills,
             "kp%": takedowns / teamKills,
-            "k+a@14": -1,
+            "takedowns@14": midgameStatsByPuuid[p.puuid].takedowns,
             "player": p.summonerName,
             "vision": p.visionScore,
             "vspm": p.visionScore / gameDuration,
@@ -83,18 +122,16 @@ function getTeamData(matchData, teamId) {
     }
 }
 
-router.get('/:matchId', function(req, res) {
-    riotFetch(`/lol/match/v5/matches/${req.params.matchId}`).then(response => response.json()).then(jsonData => {
-        console.log(jsonData);
+router.get('/:matchId', async function(req, res) {
+    var jsonData = await (await riotFetch(`/lol/match/v5/matches/${req.params.matchId}`)).json();
 
-        var blueTeam = getTeamData(jsonData, BLUE_TEAM_ID);
-        var redTeam = getTeamData(jsonData, RED_TEAM_ID);
-        res.json({
-            timestamp: new Date().toISOString(),
-            gameId: req.body.gameId,
-            blueTeam,
-            redTeam,
-            gameData: jsonData});
+    var blueTeam = await getTeamData(jsonData, BLUE_TEAM_ID);
+    var redTeam = await getTeamData(jsonData, RED_TEAM_ID);
+    res.json({
+        timestamp: new Date().toISOString(),
+        gameId: req.body.gameId,
+        blueTeam,
+        redTeam,
     });
 });
 
