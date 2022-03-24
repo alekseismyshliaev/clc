@@ -5,7 +5,7 @@ import { Button, Container, Grid, Paper, Stack, Table, TableBody, TableCell, Tab
 
 
 
-const BACKEND_URL = 'http://localhost:3001';
+const BACKEND_URL = process.env.BACKEND_DOMAIN;
 
 
 class TeamInfo extends React.Component {
