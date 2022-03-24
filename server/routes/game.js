@@ -45,7 +45,7 @@ async function getMidgameStatsByPuuid(matchId) {
 
     var addTakedown = id => statsByPuuid[puuidByParticipantId[id]].takedowns += 1;
 
-    var earlyFrames = jsonData.info.frames.filter(frame => (frame.timestamp / 60000) <= 14);    // before 14min
+    var earlyFrames = jsonData.info.frames.filter(frame => (frame.timestamp/1000) < (14 * 60 + 1));     // before 14min and 1sec; there is a small delay, frames don't publish exactly at 840000 millis
     earlyFrames.forEach(frame => {
         frame.events.forEach(event => {
             if (event.type == "CHAMPION_KILL") {
