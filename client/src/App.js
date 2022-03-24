@@ -20,23 +20,29 @@ class TeamInfo extends React.Component {
   render() {
     return (
       <>
-        <h3>{this.state.side} team: {this.state.win ? "VICTORY" : "DEFEAT"}</h3>
-        <p>
-          <Stack direction="row" spacing={2}>
-            <Paper>Barons: {this.state.totalStats.barons}</Paper>
-            <Paper>Dragons: {this.state.totalStats.dragons}</Paper>
-            <Paper>Kills: {this.state.totalStats.kills}</Paper>
-            <Paper>Towers: {this.state.totalStats.towers}</Paper>
-            {this.state.totalStats.firstBlood && <Paper><b>FIRST BLOOD!</b></Paper>}
-          </Stack>
-        </p>
-        <p>
-          <Stack direction="row" spacing={2}>
-            Bans:
-            {this.state.bans.map(b => <Paper>{b}</Paper>)}
-          </Stack>
-        </p>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell component="th" colSpan={16} align="center">{this.state.side} team: {this.state.win ? "VICTORY" : "DEFEAT"}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell component="th" scope="row">Objectives:</TableCell>
+              <TableCell align="right">{this.state.totalStats.barons}</TableCell><TableCell aligh="left">Barons</TableCell>
+              <TableCell align="right">{this.state.totalStats.dragons}</TableCell><TableCell aligh="left">Dragons</TableCell>
+              <TableCell align="right">{this.state.totalStats.kills}</TableCell><TableCell aligh="left">Kills</TableCell>
+              <TableCell align="right">{this.state.totalStats.towers}</TableCell><TableCell aligh="left">Towers</TableCell>
+              <TableCell>{this.state.totalStats.firstBlood && "First Blood!"}</TableCell>
+              <TableCell component="th" scope="row">Bans:</TableCell>
+              {this.state.bans.map(b => <TableCell>{b}</TableCell>)}
+            </TableRow>
+          </TableBody>
+        </Table>
+        <br />
         <TeamParticipants participants={this.state.participants} />
+        <br />
+        <br />
       </>
     );
   }
@@ -52,6 +58,7 @@ class TeamParticipants extends React.Component {
 
   render() {
     var prettify = number => number.toLocaleString(navigator.language, {maximumFractionDigits: 2});
+    var percent = number => number.toLocaleString(navigator.language, {style: 'percent'});
     return (
       <Table>
         <TableHead>
@@ -66,13 +73,13 @@ class TeamParticipants extends React.Component {
             <TableCell>CS/min</TableCell>
             <TableCell>Gold Earned</TableCell>
             <TableCell>Gold/min</TableCell>
-            <TableCell>Gold %</TableCell>
+            <TableCell>Team Gold %</TableCell>
             <TableCell>Vision Score</TableCell>
             <TableCell>VS/min</TableCell>
             <TableCell>Damage Dealt</TableCell>
             <TableCell>Damage/min</TableCell>
-            <TableCell>Damage %</TableCell>
-            <TableCell>Kill Participation</TableCell>
+            <TableCell>Team Damage %</TableCell>
+            <TableCell>Kill Participation %</TableCell>
             <TableCell>Gold Earned @14min</TableCell>
             <TableCell>Creep Score @14min</TableCell>
             <TableCell>Takedowns @14min</TableCell>
@@ -95,13 +102,13 @@ class TeamParticipants extends React.Component {
               <TableCell>{prettify(participant.cspm)}</TableCell>
               <TableCell>{participant.gold}</TableCell>
               <TableCell>{prettify(participant.gpm)}</TableCell>
-              <TableCell>{prettify(participant['g%'])}</TableCell>
+              <TableCell>{percent(participant['g%'])}</TableCell>
               <TableCell>{participant.vision}</TableCell>
               <TableCell>{prettify(participant.vspm)}</TableCell>
               <TableCell>{participant.damage}</TableCell>
               <TableCell>{prettify(participant.dpm)}</TableCell>
-              <TableCell>{prettify(participant['dmg%'])}</TableCell>
-              <TableCell>{prettify(participant['kp%'])}</TableCell>
+              <TableCell>{percent(participant['dmg%'])}</TableCell>
+              <TableCell>{percent(participant['kp%'])}</TableCell>
               <TableCell>{participant['gold@14']}</TableCell>
               <TableCell>{participant['cs@14']}</TableCell>
               <TableCell>{participant['takedowns@14']}</TableCell>
