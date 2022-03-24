@@ -5,7 +5,7 @@ import { Button, Container, Grid, Paper, Stack, Table, TableBody, TableCell, Tab
 
 
 
-const BACKEND_URL = process.env.BACKEND_DOMAIN;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_DOMAIN;
 
 
 class TeamInfo extends React.Component {
