@@ -9,9 +9,11 @@ const PORT = process.env.PORT || 3001;
 const app = express();
 
 // serve static files from the React build
-app.use(express.static("build"));
+//app.use(express.static("build"));
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    "origin": process.env.ALLOWED_CORS_ORIGIN,
+}));
 
 
 app.use('/api/game', GameRoutes);
