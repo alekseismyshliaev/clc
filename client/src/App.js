@@ -1,7 +1,8 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { Button, Container, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@mui/material';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { Button, Container, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, TextField } from "@mui/material";
+import { Image } from "mui-image";
 
 
 
@@ -35,7 +36,7 @@ class TeamInfo extends React.Component {
               <TableCell align="right">{this.state.totalStats.towers}</TableCell><TableCell aligh="left">Towers</TableCell>
               <TableCell>{this.state.totalStats.firstBlood && "First Blood!"}</TableCell>
               <TableCell component="th" scope="row">Bans:</TableCell>
-              {this.state.bans.map(b => <TableCell>{b}</TableCell>)}
+              {this.state.bans.map((ban, index) => <TableCell key={`${this.state.side}-ban-${index}`}>{ban}</TableCell>)}
             </TableRow>
           </TableBody>
         </Table>
@@ -64,7 +65,7 @@ class TeamParticipants extends React.Component {
         <TableHead>
           <TableRow>
             <TableCell>Player</TableCell>
-            <TableCell>Champion</TableCell>
+            <TableCell colSpan={2}>Champion</TableCell>
             <TableCell>Kills</TableCell>
             <TableCell>Deaths</TableCell>
             <TableCell>Assists</TableCell>
@@ -94,6 +95,9 @@ class TeamParticipants extends React.Component {
             >
               <TableCell component="th" scope="row">{participant.player}</TableCell>
               <TableCell component="th" scope="row">{participant.champion}</TableCell>
+              <TableCell component="th" scope="row">
+                <Image src={process.env.PUBLIC_URL + `/img/${participant.role}.png`} height="1em" alt={`${participant.role}`} />
+              </TableCell>
               <TableCell>{participant.kills}</TableCell>
               <TableCell>{participant.deaths}</TableCell>
               <TableCell>{participant.assists}</TableCell>

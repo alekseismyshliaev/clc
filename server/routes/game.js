@@ -100,6 +100,7 @@ async function getTeamData(matchData, teamId) {
             "kp%": takedowns / teamKills,
             "takedowns@14": midgameStatsByPuuid[p.puuid].takedowns,
             "player": p.summonerName,
+            "role": p.lane,
             "vision": p.visionScore,
             "vspm": p.visionScore / gameDuration,
         }
