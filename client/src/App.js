@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { Button, Container, Grid, Paper, Table, TableBody, TableCell, TableHead, TableRow, TextField } from "@mui/material";
+import { Button, Container, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField } from "@mui/material";
 import { Image } from "mui-image";
 
 
@@ -168,14 +168,6 @@ class App extends React.Component {
                 <TeamInfo teamData={this.state.gameData.redTeam} teamSide={"Red"} />
               </>
             }
-            <Paper elevation={2}>
-              {this.state.gameData &&
-                <>
-                  <p>Raw data fom RIOT:</p>
-                  <pre className={"json-text"}>{JSON.stringify(this.state.gameData, null, 4)}</pre>
-                </>
-              }
-            </Paper>
           </Grid>
         </Grid>
       </Container>
