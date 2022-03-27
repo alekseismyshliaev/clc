@@ -1,8 +1,11 @@
 import "dotenv/config";
+import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
-import bodyParser from "body-parser";
+import morgan from "morgan";
 import GameRoutes from "./routes/game.js";
+import UserRoutes from "./routes/user.js";
+
 
 const PORT = process.env.PORT || 3001;
 
@@ -14,14 +17,12 @@ app.use(bodyParser.json());
 app.use(cors({
     "origin": process.env.ALLOWED_CORS_ORIGIN,
 }));
+app.use(morgan("combined"));
 
 
-app.use('/api/game', GameRoutes);
+app.use("/api/game", GameRoutes);
+app.use("/api/user", UserRoutes);
 
-
-app.post("/api/v1/getGameData", (req, res) => {
-
-})
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);

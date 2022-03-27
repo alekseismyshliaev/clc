@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import {Helmet} from 'react-helmet';
 import './index.css';
 import App from './App';
+import HeaderBar from "./HeaderBar";
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
@@ -12,6 +13,7 @@ ReactDOM.render(
       <meta name="viewport" content="initial-scale=1, width=device-width" />
     </Helmet>
     <CssBaseline />
+    <HeaderBar />
     <App />
   </React.StrictMode>,
   document.getElementById('root')

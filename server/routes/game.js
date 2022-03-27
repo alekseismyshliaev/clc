@@ -3,7 +3,7 @@ import { readFile } from "fs/promises";
 import { riotFetch } from "../utils.js";
 
 
-var router = Router();
+const router = Router();
 
 
 const BLUE_TEAM_ID = 100;
