@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 
 const router = Router();
 const CLIENT_ID = `${process.env.GOOGLE_CLIENT_ID}.apps.googleusercontent.com`;
-const AUTHORISED_EMAILS = provess.env.ALLOWED_EMAIL_LIST.split(",");
+const AUTHORISED_EMAILS = process.env.ALLOWED_EMAIL_LIST.split(",");
 
 
 async function verifyUser(userToken) {
