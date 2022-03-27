@@ -11,6 +11,8 @@ ReactDOM.render(
   <React.StrictMode>
     <Helmet>
       <meta name="viewport" content="initial-scale=1, width=device-width" />
+      <title>CLC | Sword &amp; Boar</title>
+      {/*<meta name="description" content="" />*/}
     </Helmet>
     <CssBaseline />
     <HeaderBar />

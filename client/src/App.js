@@ -1,9 +1,8 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import { Button, Container, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField } from "@mui/material";
+import { Button, CircularProgress, Grid, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import { Image } from "mui-image";
-
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_DOMAIN;
@@ -96,7 +95,7 @@ class TeamParticipants extends React.Component {
               <TableCell component="th" scope="row">{participant.player}</TableCell>
               <TableCell component="th" scope="row">{participant.champion}</TableCell>
               <TableCell component="th" scope="row">
-                <Image src={process.env.PUBLIC_URL + `/img/${participant.role}.png`} height="1em" alt={`${participant.role}`} />
+                <Image src={`${process.env.PUBLIC_URL}/img/${participant.role}.png`} height="1em" alt={`${participant.role}`} />
               </TableCell>
               <TableCell>{participant.kills}</TableCell>
               <TableCell>{participant.deaths}</TableCell>
@@ -131,6 +130,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       gameId: "",
+      gameIdError: "",
       gameData: null,
       isLoading: false,
     };
@@ -140,37 +140,62 @@ class App extends React.Component {
     this.setState({ [e.target.id]: e.target.value });
   };
 
-  getGameData = (e) => {
-    this.setState({isLoading: true});
-    fetch(`${BACKEND_URL}/api/game/${this.state.gameId}`, {
-      method: "GET",
-    }).then(response => response.json()).then(jsonData => this.setState({gameData: jsonData, isLoading: false}));
+  getGameData = async () => {
+    try {
+      this.setState({gameIdError: "", isLoading: true});
+      const response = await fetch(`${BACKEND_URL}/api/game/${this.state.gameId}`, {
+        method: "GET",
+      });
+      const jsonData = await response.json();
+      this.setState({gameData: jsonData, isLoading: false});
+    } catch (exc) {
+      console.error(exc);
+      this.setState({gameIdError: "Error loading the game ID", isLoading: false})
+    };
   };
 
   render() {
     return (
-      <Container className="App" maxWidth={false}>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12}>
-            <header className="App-header">
-              <img src={logo} className={`App-logo ${this.state.isLoading ? "loading" : ""}`} alt="logo" />
-            </header>
-          </Grid>
-
-          <TextField label="Input game ID:" id="gameId" value={this.state.gameId} onChange={this.setStateField} />
-          <Button onClick={this.getGameData}>Fetch Data</Button>
-
-          <Grid item xs={12}>
-            {this.state.gameData &&
+      <Grid container pt={2} spacing={2} justifyContent="center">
+        <Grid item>
+          <TextField
+            error={Boolean(this.state.gameIdError)}
+            helperText={this.state.gameIdError}
+            label="Input game ID:"
+            id="gameId"
+            value={this.state.gameId} onChange={this.setStateField} />
+        </Grid>
+        <Grid item>
+          <Button
+            size="large"
+            disabled={this.state.isLoading}
+            onClick={this.getGameData}
+            variant="contained"
+          >
+            {this.state.isLoading ?
               <>
-                <TeamInfo teamData={this.state.gameData.blueTeam} teamSide={"Blue"} />
-
-                <TeamInfo teamData={this.state.gameData.redTeam} teamSide={"Red"} />
+                <Typography p={1}>Loading...</Typography>
+                <CircularProgress />
+              </>
+            :
+              <>
+                <Typography p={1}>Fetch data</Typography>
+                <SearchIcon />
               </>
             }
-          </Grid>
+          </Button>
         </Grid>
-      </Container>
+
+        <Grid item xs={12}>
+          {this.state.gameData &&
+            <>
+              <TeamInfo teamData={this.state.gameData.blueTeam} teamSide={"Blue"} />
+
+              <TeamInfo teamData={this.state.gameData.redTeam} teamSide={"Red"} />
+            </>
+          }
+        </Grid>
+      </Grid>
     );
   }
 }

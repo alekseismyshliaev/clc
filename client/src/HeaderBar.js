@@ -142,7 +142,7 @@ class HeaderBar extends React.Component {
     const menuOpen = this.state.menuAnchor != null;
 
     return (
-      <AppBar position="sticky">
+      <AppBar position="static">
         <Toolbar>
           <IconButton
             size="large"
